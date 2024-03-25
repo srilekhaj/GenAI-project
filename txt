@@ -1,0 +1,58 @@
+from fastapi import FastAPI, HTTPException, Depends, status
+from pydantic import BaseModel
+from typing import Annotated,List
+import model
+from database import engine, SessionLocal
+from sqlalchemy.orm import Session
+
+app = FastAPI()
+
+model.Base.metadata.create_all(bind=engine)
+
+
+class PostBase(BaseModel):
+    title: str
+    content: str
+    user_id: int
+
+
+class UserBase(BaseModel):
+    username: str
+
+    class Config:
+        from_attributes = True
+
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
+
+
+db_dependency = Annotated[Session, Depends(get_db)]
+
+@app.post("/newusers/", status_code=status.HTTP_201_CREATED)
+async def create_user(user: UserBase, db: db_dependency):
+    db_user = model.User(**user.dict())
+    db.add(db_user)  # Add the user to the database session
+    db.commit()  # Commit the transaction to save the user to the database
+    db.refresh(db_user)  # Refresh the user object to reflect changes made in the database
+    return db_user  # Return the created user as the response
+
+@app.get("/users/{user_id}", response_model=UserBase)
+async def get_user(user_id: int, db: Session = Depends(get_db)):
+    user = db.query(model.User).filter(model.User.id == user_id).first()
+    if user is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
+    return user
+
+@app.get("/users/", response_model=List[UserBase])
+async def get_users(db: Session = Depends(get_db)):
+    users = db.query(model.User).all()
+    return users
+
+@app.get("/")
+async def read_root():
+    return {"message": "Hello, World!"}
+

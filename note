@@ -1,0 +1,149 @@
+# get method end point http://localhost:8000/accounts/123
+
+#  URL_DATABASE = mysql+pymysql://root:12345@localhost:3306/blogapplication
+mysql port
+# mysql :  127.0.0.1:3306
+
+
+GET http://127.0.0.1:8000/list_users
+[
+    {
+        "id": 1,
+        "username": "user1",
+        "password_hash": "password1",
+        "customer_id": 1
+    },
+    {
+        "id": 2,
+        "username": "user2",
+        "password_hash": "password2",
+        "customer_id": 2
+    }
+]
+
+GET http://127.0.0.1:8000/list_transactions
+
+[
+    {
+        "id": 1,
+        "transaction_type": "Deposit",
+        "amount": 100.0,
+        "account_id": 1
+    },
+    {
+        "id": 2,
+        "transaction_type": "Deposit",
+        "amount": 1000.0,
+        "account_id": 2
+    }
+]
+
+
+GET http://127.0.0.1:8000/list_accounts
+
+[
+    {
+        "id": 1,
+        "account_number": "123456789",
+        "account_type": "Savings",
+        "balance": 1000.0,
+        "customer_id": 1
+    },
+    {
+        "id": 2,
+        "account_number": "125678934",
+        "account_type": "Savings",
+        "balance": 3000.0,
+        "customer_id": 2
+    }
+]
+
+GET http://127.0.0.1:8000/list_customers
+[
+    {
+        "name": "John Doe",
+        "email": "john@example.com",
+        "phone": "1234567890",
+        "id": 1
+    },
+    {
+        "name": "Joe biden",
+        "email": "joe@example.com",
+        "phone": "9876543210",
+        "id": 2
+    }
+]
+
+# id
+
+GET http://127.0.0.1:8000/customers/1
+{
+    "name": "John Doe",
+    "email": "john@example.com",
+    "phone": "1234567890",
+    "id": 1
+}
+
+GET http://127.0.0.1:8000/accounts/1
+
+{
+    "id": 1,
+    "account_number": "123456789",
+    "account_type": "Savings",
+    "balance": 1000.0,
+    "customer_id": 1
+}
+
+GET http://127.0.0.1:8000/transactions/2
+
+{
+    "id": 2,
+    "transaction_type": "Deposit",
+    "amount": 1000.0,
+    "account_id": 2
+}
+
+
+GET http://127.0.0.1:8000/users/2
+
+{
+    "id": 2,
+    "username": "user2",
+    "password_hash": "password2",
+    "customer_id": 2
+}
+
+POST http://127.0.0.1:8000/customers/
+GIVE JSON VALUE
+SELECT BODY  -- RAW --JSON IN THE OPTION
+{
+    "name" :"Jane Smith",
+    "email" : "jane@example.com",
+    "phone" : "9876543210"
+}
+POST http://127.0.0.1:8000/accounts/
+{
+    "account_number" : "987654321",
+    "account_type" : "Checking",
+    "balance" : 500,
+    "customer_id": 2
+}
+
+POST http://127.0.0.1:8000/transactions/
+{
+   "transaction_type" : "Withdrawal",
+   "amount" : 50,
+   "account_id" : 2
+}
+
+output will be
+{
+    "transaction_type": "Withdrawal",
+    "amount": 50.0,
+    "account_id": 2,
+    "timestamp": "2024-03-25T00:40:01",
+    "id": 3
+}
+
+
+POST http://127.0.0.1:8000/users/
